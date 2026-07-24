@@ -1,48 +1,20 @@
-# TeleBirr Transaction Log Reader
+def split_bill(total, people, tip_rate=0.10):
+    """
+    Calculates the per-person amount including TeleBirr tip.
+    """
+    total_tip = total * tip_rate
+    grand_total = total + total_tip
+    per_person_share = grand_total / people
+    return per_person_share
 
-# Step 1: Open and read transactions.txt line by line
-file = open("transactions.txt", "r")
-customer_spend = {}
+# 1. Store bill data and people count
+bill_total_etb = 1250.00
+friends = ["Abebe", "Aster", "Chala", "Makeda"]
+number_of_people = len(friends)
+# 2. & 3. Call function to compute the share
+individual_share = split_bill(bill_total_etb, number_of_people)
 
-for line in file:
-    clean_line = line.strip()
-    if clean_line == "":
-        continue
-
-    # Split name and amount by comma
-    parts = clean_line.split(",")
-    name = parts[0].strip()
-    amount = float(parts[1].strip())
-
-    # Step 2: Build dictionary mapping customer to total spend
-    if name in customer_spend:
-        customer_spend[name] = customer_spend[name] + amount
-    else:
-        customer_spend[name] = amount
-
-file.close()
-
-# Step 3: Sort customer names by their total spend (highest first)
-customer_names = list(customer_spend.keys())
-
-
-def get_spend(name):
-    return customer_spend[name]
-
-
-customer_names.sort(key=get_spend, reverse=True)
-
-# Step 5: Print summary and write to report.txt
-out_file = open("report.txt", "w")
-
-print("CUSTOMER \t TOTAL SPEND")
-out_file.write("CUSTOMER \t TOTAL SPEND\n")
-
-for name in customer_names:
-    total = customer_spend[name]
-    row = name + " \t\t " + str(total)
-
-    print(row)
-    out_file.write(row + "\n")
-
-out_file.close()
+# 4. Loop over names and print each person's share via TeleBirr
+print(f"--- TeleBirr Bill Split (Total: {bill_total_etb} ETB) ---")
+for name in friends:
+    print(f"{name} needs to send {individual_share:.2f} ETB via TeleBirr.")
